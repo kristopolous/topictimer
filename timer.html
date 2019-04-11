@@ -65,7 +65,7 @@ body {
     ["no politics", 60],
     ["don't sell stuff", 60],
     ["show numbers", 60]
-  ], mult = 1.5, show = 0;
+  ], mult = 1.75, show = 0;
 
 function hsl2Rgb(h, s, l){
     var r, g, b;
@@ -121,7 +121,9 @@ function play() {
     timer.innerHTML = str;
     timer.style.top = (mult * ttl) - 20 + "px";
     topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
-    window.scroll(0, (mult * ttl) - 300); 
+    if(Math.floor(ttl * mult)% 30 == 0 && (mult * ttl) > 300) {
+      window.scroll(0, (mult * ttl) - 300); 
+    }
   }, 1000 / mult);
 }
 

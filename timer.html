@@ -22,7 +22,6 @@ body {
   position: relative;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid black;
   white-space: nowrap;
 }
 #timer {
@@ -49,7 +48,7 @@ body {
     </div>
     <div id=template>
       <script type=text/plain id=template-row>
-        <div class=topic style="color:<%=fg%>;height:<%= height %>px">
+        <div class=topic style="box-shadow: 1px 0 3px 1px <%=fg%>;color:<%=fg%>;height:<%= height %>px">
         <div class=bg style=background-color:<%=bg%>></div>
         <%= topic %>
         </div>
@@ -59,8 +58,10 @@ body {
 <script src=underscore-min.js></script>
 <script>
   var timer,topicList = [ 
+    ['strange food', 90],
     ['show name', 60],
     ['theme song', 120],
+    ['voicemail', 120],
     ['store closed', 90],
     ['tax software', 120],
     ['theme software', 120],
@@ -104,23 +105,34 @@ function toDom(html) {
   return template.content.firstChild;
 }
 
+var ts = {};
 function play() {
-  var ix = 0, 
-    iy = 0, 
-    ttl = 0, 
+
+  ts = {
+    ix: 0,
+    iy: 0,
+    ttl: 0
+  }
+  var 
+    anim = mult * 6;
     start = new Date(), 
-    incr = 1 / mult;
+    incr = 1 / anim;
 
   var ival = setInterval(function() {
-    iy += incr;
-    ttl += incr;
-    if(iy > topicList[ix][1]) {
-      iy = 0;
-      ix++;
-      if(ix >= topicList.length) {
+    ts.iy += incr;
+    ts.ttl += incr;
+    if(ts.iy > topicList[ts.ix][1]) {
+      topicList[ts.ix][2].querySelector('.bg').style.height = '100%';
+      ts.iy -= topicList[ts.ix][1];
+      ts.ix++;
+      if(ts.ix >= topicList.length) {
         clearInterval(ival);
         return;
       }
+    } else if (ts.iy < 0 && ts.ix > 0) {
+      topicList[ts.ix][2].querySelector('.bg').style.height = '0';
+      ts.ix--;
+      ts.iy = topicList[ts.ix][1] + ts.iy;
     }
 
     var lapse = (new Date() - start) / 1000;
@@ -132,12 +144,12 @@ function play() {
     ].join(':');
 
     timer.innerHTML = str;
-    timer.style.top = (mult * ttl) - 20 + "px";
-    topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
-    if(Math.floor(ttl * mult) % 30 == 0 && (mult * ttl) > 300) {
-      window.scroll(0, (mult * ttl) - 300); 
+    timer.style.top = (mult * ts.ttl) - 20 + "px";
+    topicList[ts.ix][2].querySelector('.bg').style.height = (mult * ts.iy) + "px";
+    if(Math.floor(ts.ttl * mult) % 30 == 0 && (mult * ts.ttl) > 300) {
+      window.scroll(0, (mult * ts.ttl) - 300); 
     }
-  }, 1000 / mult);
+  }, 1000 / anim);
 }
 
 function generate() {
@@ -160,6 +172,18 @@ function generate() {
   play();
 }
 
+window.addEventListener('keydown', function(e) {
+  if(e.key === 'ArrowLeft') {
+    ts.ttl -= 1.5;
+    ts.iy -= 1.5;
+  }
+  if(e.key === 'ArrowRight') {
+    ts.ttl += 1;
+    ts.iy += 1;
+  }
+
+  console.log(e);
+});
 window.onload = generate;
 </script>
 </html>

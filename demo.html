@@ -9,9 +9,19 @@ body { margin: 0; padding: 0}
 .topic { width: 100%;
   display: flex;
   font-size: 2rem;
+  position: relative;
   align-items: center;
   justify-content: center;
-  border: 1px solid black;
+  border-bottom: 1px solid black;
+}
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  border-bottom: 1px solid white;
+  background: black;
 }
 </style>
   <body>
@@ -19,7 +29,9 @@ body { margin: 0; padding: 0}
     </div>
     <div id=template>
       <script type=text/plain id=template-row>
-        <div class=topic style="height:<%= height %>px"><%= topic %>
+        <div class=topic style="height:<%= height %>px">
+        <div class=bg></div>
+        <%= topic %>
         </div>
       </script>
     </div>
@@ -30,14 +42,36 @@ body { margin: 0; padding: 0}
     ['a', 30],
     ['b', 50],
     ['c', 40]
-  ];
+  ], mult = 4;
+
+function toDom(html) {
+  var template = document.createElement('template');
+  html = html.trim(); 
+  template.innerHTML = html;
+  return template.content.firstChild;
+}
 
 function generate() {
   var tpl = _.template(document.querySelector('#template-row').innerHTML)
   topicList.forEach(row => {
-    document.querySelector("#timeline").innerHTML += tpl({topic: row[0], height: 4 * row[1]});
+    var dom = toDom(tpl({topic: row[0], height: mult * row[1]}));
+    row.push(dom);
+    document.querySelector("#timeline").appendChild(dom);
   });
 }
+var ix = 0, iy = 0;
+var ival = setInterval(function() {
+  iy++;
+  if(iy > topicList[ix][1]) {
+    iy = 0;
+    ix++;
+    if(ix >= topicList.length) {
+      clearInterval(ival);
+    }
+  }
+  topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
+  console.log(ix, iy);
+}, 10);
 window.onload = generate;
 </script>
 </html>

@@ -21,8 +21,9 @@ body {
 }
 #timer {
   position: absolute;
+  font-size: 3rem;
   top: 0;
-  left: 0;
+  left: 10px;
 }
 .bg {
   position: absolute;
@@ -51,7 +52,7 @@ body {
   </body>
 <script src=underscore-min.js></script>
 <script>
-  var topicList = [ 
+  var timer,topicList = [ 
     ['theme song', 120],
     ['store closed', 90],
     ['tax software', 120],
@@ -94,7 +95,7 @@ function toDom(html) {
 }
 
 function play() {
-  var ix = 0, iy = 0, ttl = 0;
+  var ix = 0, iy = 0, ttl = 0, start = new Date();
   var ival = setInterval(function() {
     iy++;
     ttl++;
@@ -106,11 +107,18 @@ function play() {
         return;
       }
     }
-    document.querySelector('#timer').innerHTML = ttl;
+    var lapse = (new Date() - start) / 1000;
+    var str = [ 
+      ("" + (100 + Math.floor(lapse / 60 / 60))).slice(1),
+      ("" + (100 + Math.floor(lapse / 60 ) % 60)).slice(1),
+      ("" + (100 + Math.floor(lapse) % 60)).slice(1)
+    ].join(':');
+    timer.innerHTML = str;
+    timer.style.top = (mult * ttl) - 70 + "px";
     topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
     window.scroll(0, (mult * ttl) - 300); 
     console.log(ix, iy);
-  }, 10);
+  }, 100);
 }
 function generate() {
   var tpl = _.template(document.querySelector('#template-row').innerHTML)
@@ -125,6 +133,7 @@ function generate() {
     document.querySelector("#timeline").appendChild(dom);
     ix++;
   });
+  timer = document.querySelector('#timer');
   play();
 }
 window.onload = generate;

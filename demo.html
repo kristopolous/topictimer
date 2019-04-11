@@ -1,4 +1,30 @@
-<script src=underscore.min.js></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+<style>
+body { margin: 0; padding: 0}
+#template { display: none }
+.topic { width: 100%;
+  display: flex;
+  font-size: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+}
+</style>
+  <body>
+    <div id=timeline>
+    </div>
+    <div id=template>
+      <script type=text/plain id=template-row>
+        <div class=topic style="height:<%= height %>px"><%= topic %>
+        </div>
+      </script>
+    </div>
+  </body>
+<script src=underscore-min.js></script>
 <script>
   var topicList = [ 
     ['a', 30],
@@ -7,5 +33,11 @@
   ];
 
 function generate() {
+  var tpl = _.template(document.querySelector('#template-row').innerHTML)
+  topicList.forEach(row => {
+    document.querySelector("#timeline").innerHTML += tpl({topic: row[0], height: 4 * row[1]});
+  });
 }
+window.onload = generate;
 </script>
+</html>

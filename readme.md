@@ -10,7 +10,7 @@ this didn't seem to exist.
 
 This will eventually be something that mere non-technical humans can use ... but as of now it's just something that you need to have programming skillz to do.
 
-Here's an example for what will be my upcoming podcast for 04/12/2019.
+[Here's an example for what will be my upcoming podcast for 04/12/2019.](http://9ol.es/topictimer.html)
 
 ### Some future features:
 

@@ -3,6 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
   </head>
 <style>
 body { 
@@ -11,7 +12,7 @@ body {
 #template { display: none }
 .topic { width: 100%;
   display: flex;
-  font-size: 6rem;
+  font-size: 5rem;
   opacity: 0.7;
   position: relative;
   align-items: center;
@@ -21,8 +22,10 @@ body {
 }
 #timer {
   position: absolute;
-  font-size: 3rem;
+  font-size: 2rem;
   top: 0;
+  font-weight: 800;
+  font-family: 'Source Code Pro', monospace;
   left: 10px;
 }
 .bg {
@@ -33,8 +36,6 @@ body {
   z-index: -1;
   width: 100%;
   height: 0;
-  border-bottom: 1px solid white;
-  background: purple;
 }
 </style>
   <body>
@@ -53,14 +54,18 @@ body {
 <script src=underscore-min.js></script>
 <script>
   var timer,topicList = [ 
+    ['show name', 60],
     ['theme song', 120],
     ['store closed', 90],
     ['tax software', 120],
     ['theme software', 120],
     ['sold car', 180],
     ['audio hardware', 90],
-    ['c', 4]
-  ], mult = 3;
+    ['podbean', 90],
+    ["no politics", 60],
+    ["don't sell stuff", 60],
+    ["show numbers", 60]
+  ], mult = 1.5, show = 0;
 
 function hsl2Rgb(h, s, l){
     var r, g, b;
@@ -95,10 +100,10 @@ function toDom(html) {
 }
 
 function play() {
-  var ix = 0, iy = 0, ttl = 0, start = new Date();
+  var ix = 0, iy = 0, ttl = 0, start = new Date(), incr = 1/mult;
   var ival = setInterval(function() {
-    iy++;
-    ttl++;
+    iy += incr;
+    ttl += incr;
     if(iy > topicList[ix][1]) {
       iy = 0;
       ix++;
@@ -114,12 +119,12 @@ function play() {
       ("" + (100 + Math.floor(lapse) % 60)).slice(1)
     ].join(':');
     timer.innerHTML = str;
-    timer.style.top = (mult * ttl) - 70 + "px";
+    timer.style.top = (mult * ttl) - 20 + "px";
     topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
     window.scroll(0, (mult * ttl) - 300); 
-    console.log(ix, iy);
-  }, 100);
+  }, 1000 / mult);
 }
+
 function generate() {
   var tpl = _.template(document.querySelector('#template-row').innerHTML)
   var ix = Math.random() * 10;
@@ -131,8 +136,10 @@ function generate() {
     var dom = toDom(tpl({fg: fg, bg: bg, topic: row[0], height: mult * row[1]}));
     row.push(dom);
     document.querySelector("#timeline").appendChild(dom);
+    show += row[1];
     ix++;
   });
+  console.log(show / 60);
   timer = document.querySelector('#timer');
   play();
 }

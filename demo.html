@@ -19,6 +19,11 @@ body {
   overflow: hidden;
   border-bottom: 1px solid black;
 }
+#timer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 .bg {
   position: absolute;
   top: 0;
@@ -32,6 +37,7 @@ body {
 }
 </style>
   <body>
+    <div id=timer> </div>
     <div id=timeline>
     </div>
     <div id=template>
@@ -87,6 +93,25 @@ function toDom(html) {
   return template.content.firstChild;
 }
 
+function play() {
+  var ix = 0, iy = 0, ttl = 0;
+  var ival = setInterval(function() {
+    iy++;
+    ttl++;
+    if(iy > topicList[ix][1]) {
+      iy = 0;
+      ix++;
+      if(ix >= topicList.length) {
+        clearInterval(ival);
+        return;
+      }
+    }
+    document.querySelector('#timer').innerHTML = ttl;
+    topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
+    window.scroll(0, (mult * ttl) - 300); 
+    console.log(ix, iy);
+  }, 10);
+}
 function generate() {
   var tpl = _.template(document.querySelector('#template-row').innerHTML)
   var ix = Math.random() * 10;
@@ -100,23 +125,8 @@ function generate() {
     document.querySelector("#timeline").appendChild(dom);
     ix++;
   });
+  play();
 }
-var ix = 0, iy = 0, ttl = 0;
-var ival = setInterval(function() {
-  iy++;
-  ttl++;
-  if(iy > topicList[ix][1]) {
-    iy = 0;
-    ix++;
-    if(ix >= topicList.length) {
-      clearInterval(ival);
-      return;
-    }
-  }
-  topicList[ix][2].querySelector('.bg').style.height = (mult * iy) + "px";
-  window.scroll(0, (mult * ttl) - 300); 
-  console.log(ix, iy);
-}, 10);
 window.onload = generate;
 </script>
 </html>

@@ -53,6 +53,7 @@ body {
   padding: 1rem;
   background: white;
   border: 1px solid black;
+  display: none;
   z-index: 4;
 }
 .control textarea, .control input {
@@ -68,7 +69,18 @@ button {
   padding: 0.5rem;
   color: white;
   font-size: 1.25rem;
-  border: 0;
+  border: 1px solid black;
+}
+button.cancel {
+  background: white;
+  color: black;
+}
+.button {
+  color: blue;
+  cursor: pointer;
+}
+.button:hover {
+  color: black;
 }
 
 </style>
@@ -77,12 +89,14 @@ button {
     <div id=timeline>
     </div>
     <div id=edit>
-      <div class='button'>&#9998;</div>
-      <div class='control'>
+      <div onclick=showcontrol() class='button closed'>&#9998;</div>
+      <div class='control open'>
         Episode Title
         <input placeholder="episode name" id='episode-name'>
         <textarea rows=10 id='input'></textarea>
-        <button onclick='update()'>update</button>
+        <button style=float:left; onclick='hidecontrol()' class=cancel>cancel</button>
+        <button style=float:right onclick='update()'>update</button>
+        <div style=clear:both></div>
       </div>
     </div>
     <div id=template>
@@ -142,6 +156,15 @@ function toDom(html) {
   html = html.trim(); 
   template.innerHTML = html;
   return template.content.firstChild;
+}
+
+function showcontrol() {
+  document.querySelector("#edit .closed").style.display = 'none';
+  document.querySelector("#edit .open").style.display = 'block';
+}
+function hidecontrol() {
+  document.querySelector("#edit .closed").style.display = 'block';
+  document.querySelector("#edit .open").style.display = 'none';
 }
 
 var ts = {};
